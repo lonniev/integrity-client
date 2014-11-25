@@ -68,18 +68,15 @@ directory "#{installDir}" do
   action :create
 end
 
-link "/lib64/libc.so.6" do
+link "/lib/libc.so.6" do
   to "/lib/x86_64-linux-gnu/libc.so.6"
   only_if "test -f /lib/x86_64-linux-gnu/libc.so.6"
   not_if "test -f /lib/libc.so.6"
-  not_if "test -f /lib64/libc.so.6"
-  only_if false
 end
 
 execute "silently install the client" do
   cwd zipDir
   command "./mksclient.bin -DinstallLocation=#{installDir} -i silent"
-  creates "#{installDir}/bin/IntegrityClient"
 end
 
 directory "#{zipDir}" do
