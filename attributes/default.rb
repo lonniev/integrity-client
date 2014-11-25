@@ -1,5 +1,5 @@
 #
-# Cookbook Name:: get-gitrepos
+# Cookbook Name:: integrity-client
 # Recipe:: default
 #
 # Copyright 2014, Lonnie VanZandt lonniev@gmail.com
@@ -16,24 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-default['get-gitrepos']['repos'] =
-[
-  {
-     'tycho-demo' =>
-     {
-         'user'=> {
-             'fullname' => 'Ima Coder',
-             'username' => 'icoder',
-             'password' => '$1$AjPVIlOd$.T6f5fjD3x1su.bNB2SDQ.',
-             'shell'    => '/bin/bash',
-             'xsession' => 'xfce4-session'
-         },
-         
-         'destination' => '~icoder/workspace/tycho/org.eclipse.tycho-demo',
-         'url' => 'git://git.eclipse.org/gitroot/tycho/org.eclipse.tycho-demo.git',
-         'remote-branch-name' => 'master',
-         'revision' => 'HEAD',
-         'local-branch-name' => 'icoder_cloned_master'
-     }
-  }
-]
+default['integrity-client']['rarFile'] = "/opt/vagrant/installables/IntegrityClient.part1.rar"
+default['integrity-client']['zipDir'] = "~/ziptmp"
+default['integrity-client']['zipFile'] = "MED-60958-CD-106_F000_Integrity-10-6-Client-Linux32.zip"
+default['integrity-client']['installDir'] = "/opt/Integrity/IntegrityClient10"

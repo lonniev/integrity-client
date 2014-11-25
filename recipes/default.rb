@@ -17,67 +17,48 @@
 # limitations under the License.
 #
 
-node['integrity-client']['clients'].each do |clientSpec|
-    
-  clientSpec.each do |clientName, repo|
-    
-    getHomeCmd = Mixlib::ShellOut.new("useradd -D|grep HOME|cut -d '=' -f 2")
-    getHomeCmd.run_command
-
-    homeDir = getHomeCmd.stdout.chomp
-    
-    gitUserName = repo['user']['username']
-    userHomePath = "#{homeDir}/#{gitUserName}"
-    
-    user gitUserName do
-        action   :create
-        username gitUserName
-        password repo['user']['password']
-        comment  repo['user']['fullname']
-        home     userHomePath
-        shell    repo['user']['shell'] || '/bin/bash'
-    end
-    
-    directory userHomePath do
-        owner gitUserName
-        group gitUserName
-        recursive true
-        action :create
-    end
-    
-    directory "#{userHomePath}/Downloads" do
-        owner gitUserName
-        group gitUserName
-        recursive true
-        action :create
-    end
-    
-   destPath = repo['destination'].sub( /~/, "#{homeDir}/" )
-    
-    directory destPath do
-        owner gitUserName
-        group gitUserName
-        recursive true
-        action :create
-    end
-
-    destPath = ::File.expand_path( destPath )
-
-    remote_file destFile
-        source "#{url}?dlm=no&wcn=#{wcn}&cn=#{cn}&uname=#{uname}&uid=#{uid}&__gda__=#{gda}&ext=.zip"
-        
-        headers { "Authorization" => "Basic #{encodedPassword}" }
-
-        owner gitUserName
-        group gitUserName
-        mode 0666
-        
-        action :create_if_missing
-    end
-  
-    log "message" do
-        message "Downloaded #{clientName} for user #{gitUserName} into #{destPath}."
-        level :info
-    end
-  end
+package "rar" do
+  action :upgrade
 end
+  
+package "unrar" do
+  action :upgrade
+end
+
+directory "#{node['integrity-client']['zipDir']}" do
+  owner 'root'
+  group 'root'
+  mode '0644'
+  action :create
+end
+
+execute "reassemble zip from rar fragments" do
+  command "unrar x -y #{node['integrity-client']['rarFile']} #{node['integrity-client']['zipDir']}"
+  creates #{node['integrity-client']['zipFile']}
+end
+
+execute "unzip the installer" do
+  command "cd #{node['integrity-client']['zipDir']}; unzip #{node['integrity-client']['zipFile']}"
+  creates #{node['integrity-client']['zipDir']}/mksclient.bin
+end
+
+directory "#{node['integrity-client']['installDir']}" do
+  owner 'root'
+  group 'root'
+  mode '0644'
+  action :create
+end
+
+execute "silently install the client" do
+  command "./mksclient.bin -DinstallLocation=#{node['integrity-client']['installDir']} -i silent"
+  creates #{node['integrity-client']['installDir']}/bin/IntegrityClient
+end
+
+directory "#{node['integrity-client']['zipDir']}" do
+  action :delete
+end
+
+
+
+
+    
