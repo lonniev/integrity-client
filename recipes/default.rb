@@ -36,7 +36,7 @@ directory "#{zipDir}" do
   owner 'root'
   group 'root'
   mode '0644'
-  recursive :true
+  recursive true
   action :create
 end
 
@@ -59,7 +59,7 @@ directory "#{installDir}" do
   owner 'root'
   group 'root'
   mode '0644'
-  recursive :true
+  recursive true
   action :create
 end
 
