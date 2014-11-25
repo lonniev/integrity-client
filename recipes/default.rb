@@ -73,6 +73,7 @@ link "/lib64/libc.so.6" do
   only_if "test -f /lib/x86_64-linux-gnu/libc.so.6"
   not_if "test -f /lib/libc.so.6"
   not_if "test -f /lib64/libc.so.6"
+  only_if false
 end
 
 execute "silently install the client" do
