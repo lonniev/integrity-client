@@ -49,7 +49,7 @@ zipFile = node['integrity-client']['zipFile'].sub( /~/, "#{homeDir}/" )
 
 execute "reassemble zip from rar fragments" do
   command "unrar x -y #{rarFile} #{zipDir}"
-  creates "#{zipFile}"
+  creates "#{zipDir}/#{zipFile}"
 end
 
 execute "unzip the installer" do
@@ -68,9 +68,9 @@ directory "#{installDir}" do
   action :create
 end
 
-link "/lib64/x86_64-linux-gnu/libc.so.6" do
+link "/lib/x86_64-linux-gnu/libc.so.6" do
   to "/lib64/libc.so.6"
-  only_if "test -f /lib64/x86_64-linux-gnu/libc.so.6"
+  only_if "test -f /lib/x86_64-linux-gnu/libc.so.6"
 end
 
 execute "silently install the client" do
