@@ -25,36 +25,50 @@ package "unrar" do
   action :upgrade
 end
 
-directory "#{node['integrity-client']['zipDir']}" do
+getHomeCmd = Mixlib::ShellOut.new("useradd -D|grep HOME|cut -d '=' -f 2")
+getHomeCmd.run_command
+
+homeDir = getHomeCmd.stdout.chomp
+
+zipDir = node['integrity-client']['zipDir'].sub( /~/, "#{homeDir}/" )
+
+directory "#{zipDir}" do
   owner 'root'
   group 'root'
   mode '0644'
+  recursive :true
   action :create
 end
 
+rarFile = node['integrity-client']['rarFile'].sub( /~/, "#{homeDir}/" )
+zipFile = node['integrity-client']['zipFile'].sub( /~/, "#{homeDir}/" )
+
 execute "reassemble zip from rar fragments" do
-  command "unrar x -y #{node['integrity-client']['rarFile']} #{node['integrity-client']['zipDir']}"
-  creates #{node['integrity-client']['zipFile']}
+  command "unrar x -y #{rarFile} #{zipDir}"
+  creates "#{zipFile}"
 end
 
 execute "unzip the installer" do
-  command "cd #{node['integrity-client']['zipDir']}; unzip #{node['integrity-client']['zipFile']}"
-  creates #{node['integrity-client']['zipDir']}/mksclient.bin
+  command "cd #{zipDir}; unzip #{zipFile}"
+  creates "#{zipDir}/mksclient.bin"
 end
 
-directory "#{node['integrity-client']['installDir']}" do
+installDir = node['integrity-client']['installDir'].sub( /~/, "#{homeDir}/" )
+
+directory "#{installDir}" do
   owner 'root'
   group 'root'
   mode '0644'
+  recursive :true
   action :create
 end
 
 execute "silently install the client" do
-  command "./mksclient.bin -DinstallLocation=#{node['integrity-client']['installDir']} -i silent"
-  creates #{node['integrity-client']['installDir']}/bin/IntegrityClient
+  command "./mksclient.bin -DinstallLocation=#{installDir} -i silent"
+  creates "#{installDir}/bin/IntegrityClient"
 end
 
-directory "#{node['integrity-client']['zipDir']}" do
+directory "#{zipDir}" do
   action :delete
 end
 
