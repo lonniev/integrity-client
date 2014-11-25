@@ -68,6 +68,11 @@ directory "#{installDir}" do
   action :create
 end
 
+link "/lib64/x86_64-linux-gnu/libc.so.6" do
+  to "/lib64/libc.so.6"
+  only_if "test -f /lib64/x86_64-linux-gnu/libc.so.6"
+end
+
 execute "silently install the client" do
   cwd zipDir
   command "./mksclient.bin -DinstallLocation=#{installDir} -i silent"
