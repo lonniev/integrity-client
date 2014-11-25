@@ -53,7 +53,8 @@ execute "reassemble zip from rar fragments" do
 end
 
 execute "unzip the installer" do
-  command "cd #{zipDir}; unzip #{zipFile}"
+  cwd zipDir
+  command "unzip #{zipFile}"
   creates "#{zipDir}/mksclient.bin"
 end
 
@@ -68,6 +69,7 @@ directory "#{installDir}" do
 end
 
 execute "silently install the client" do
+  cwd zipDir
   command "./mksclient.bin -DinstallLocation=#{installDir} -i silent"
   creates "#{installDir}/bin/IntegrityClient"
 end

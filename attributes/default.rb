@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-default['integrity-client']['rarFile'] = "/opt/vagrant/installables/IntegrityClient.part1.rar"
-default['integrity-client']['zipDir'] = "~/ziptmp"
-default['integrity-client']['zipFile'] = "MED-60958-CD-106_F000_Integrity-10-6-Client-Linux32.zip"
-default['integrity-client']['installDir'] = "/opt/Integrity/IntegrityClient10"
+default['integrity-client']['rarFile'] = "file.part1.rar"
+default['integrity-client']['zipDir'] = "/tmp"
+default['integrity-client']['zipFile'] = "myzip.zip"
+default['integrity-client']['installDir'] = "/opt/app"
