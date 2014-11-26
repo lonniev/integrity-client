@@ -77,6 +77,7 @@ end
 execute "silently install the client" do
   cwd zipDir
   command "./mksclient.bin -DinstallLocation=#{installDir} -i silent"
+  ignore_failure true
 end
 
 directory "#{zipDir}" do
