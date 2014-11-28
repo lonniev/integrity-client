@@ -34,7 +34,7 @@ getHomeCmd.run_command
 
 homeDir = getHomeCmd.stdout.chomp
 
-zipDir = Pathname.expand_path( node['integrity-client']['zipDir'] )
+zipDir = File.expand_path( node['integrity-client']['zipDir'] )
 
 directory "#{zipDir}" do
   owner 'root'
