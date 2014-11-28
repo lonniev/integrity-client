@@ -34,7 +34,7 @@ getHomeCmd.run_command
 
 homeDir = getHomeCmd.stdout.chomp
 
-zipDir = node['integrity-client']['zipDir'].sub( /~/, "#{homeDir}/" )
+zipDir = Pathname.expand_path( node['integrity-client']['zipDir'] )
 
 directory "#{zipDir}" do
   owner 'root'
@@ -66,12 +66,6 @@ directory "#{installDir}" do
   mode '0644'
   recursive true
   action :create
-end
-
-link "/lib/libc.so.6" do
-  to "/lib/x86_64-linux-gnu/libc.so.6"
-  only_if "test -f /lib/x86_64-linux-gnu/libc.so.6"
-  not_if "test -f /lib/libc.so.6"
 end
 
 execute "silently install the client" do
