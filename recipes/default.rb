@@ -29,11 +29,6 @@ package "unzip" do
   action :upgrade
 end
 
-getHomeCmd = Mixlib::ShellOut.new("useradd -D|grep HOME|cut -d '=' -f 2")
-getHomeCmd.run_command
-
-homeDir = getHomeCmd.stdout.chomp
-
 zipDir = File.expand_path( node['integrity-client']['zipDir'] )
 
 directory "#{zipDir}" do
@@ -44,8 +39,8 @@ directory "#{zipDir}" do
   action :create
 end
 
-rarFile = node['integrity-client']['rarFile'].sub( /~/, "#{homeDir}/" )
-zipFile = node['integrity-client']['zipFile'].sub( /~/, "#{homeDir}/" )
+rarFile = File.expand_path( node['integrity-client']['rarFile'] )
+zipFile = File.expand_path( node['integrity-client']['zipFile'] )
 
 execute "reassemble zip from rar fragments" do
   command "unrar x -y #{rarFile} #{zipDir}"
@@ -58,7 +53,7 @@ execute "unzip the installer" do
   creates "#{zipDir}/mksclient.bin"
 end
 
-installDir = node['integrity-client']['installDir'].sub( /~/, "#{homeDir}/" )
+installDir = File.expand_path( node['integrity-client']['installDir'] )
 
 directory "#{installDir}" do
   owner 'root'
@@ -68,17 +63,8 @@ directory "#{installDir}" do
   action :create
 end
 
-execute "silently install the client" do
-  cwd zipDir
-  command "./mksclient.bin -DinstallLocation=#{installDir} -i silent"
-  ignore_failure true
+link "/lib/libc.so.6" do
+  to "/lib/i386-linux-gnu/libc.so.6"
+  only_if "test -f /lib/i386-linux-gnu/libc.so.6"
+  not_if "test -f /lib/libc.so.6"
 end
-
-directory "#{zipDir}" do
-  action :delete
-end
-
-
-
-
-    
