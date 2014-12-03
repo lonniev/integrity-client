@@ -40,14 +40,14 @@ directory "#{zipDir}" do
 end
 
 rarFile = File.expand_path( node['integrity-client']['rarFile'] )
-zipFile = File.expand_path( node['integrity-client']['zipFile'] )
+zipFile = node['integrity-client']['zipFile']
 
 execute "reassemble zip from rar fragments" do
   command "unrar x -y #{rarFile} #{zipDir}"
   creates "#{zipDir}/#{zipFile}"
 end
 
-execute "unzip the installer" do
+execute "unzip the installer #{zipFile}" do
   cwd zipDir
   command "unzip #{zipFile}"
   creates "#{zipDir}/mksclient.bin"
