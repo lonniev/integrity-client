@@ -17,6 +17,8 @@
 # limitations under the License.
 #
 
+include_recipe "manage-users"
+
 package "rar" do
   action :upgrade
 end
